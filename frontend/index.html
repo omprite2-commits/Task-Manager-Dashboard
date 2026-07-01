@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Full-Stack Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { margin: 0; font-family: sans-serif; display: flex; background: #0f172a; color: white; }
+        .sidebar { width: 220px; height: 100vh; background: #1e293b; padding: 20px; }
+        .sidebar li { padding: 15px; cursor: pointer; list-style: none; border-bottom: 1px solid #334155; }
+        .sidebar li:hover { background: #38bdf8; color: #000; }
+        .content { flex: 1; padding: 40px; }
+        .page { display: none; background: #1e293b; padding: 30px; border-radius: 15px; }
+        .active { display: block; }
+        button { padding: 8px 15px; background: #38bdf8; border: none; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>Menu</h3>
+        <ul>
+            <li onclick="show('dash')">Dashboard</li>
+            <li onclick="show('tasks')">Task List</li>
+            <li onclick="show('reports')">Reports</li>
+        </ul>
+    </div>
+    <div class="content">
+        <div id="dash" class="page active">
+            <h1>Dashboard</h1>
+            <p>Total Tasks: <span id="count">0</span></p>
+        </div>
+        <div id="tasks" class="page">
+            <h1>Task List</h1>
+            <input id="in" placeholder="Task name..."> <button onclick="add()">Add</button>
+            <ul id="list"></ul>
+        </div>
+        <div id="reports" class="page">
+            <h1>Reports</h1>
+            <div style="width: 300px;"><canvas id="myChart"></canvas></div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://127.0.0.1:5000/api/tasks';
+        let myChart;
+
+        function show(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        async function load() {
+            const res = await fetch(API);
+            const data = await res.json();
+            document.getElementById('count').innerText = data.length;
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            data.forEach(t => list.innerHTML += `<li>${t.title} <button onclick="del(${t.id})">Del</button></li>`);
+            updateChart(data.length);
+        }
+
+        async function add() {
+            const title = document.getElementById('in').value;
+            if(!title) return;
+            await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({title})});
+            document.getElementById('in').value = '';
+            load();
+        }
+
+        async function del(id) { await fetch(`${API}/${id}`, {method:'DELETE'}); load(); }
+
+        function updateChart(total) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            if(myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'pie',
+                data: { labels: ['Tasks', 'Empty'], datasets: [{ data: [total, 5], backgroundColor: ['#38bdf8', '#334155'] }] }
+            });
+        }
+        
+        load();
+    </script>
+</body>
+</html>

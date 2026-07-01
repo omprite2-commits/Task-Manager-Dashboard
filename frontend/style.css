@@ -1,0 +1,17 @@
+/* Update your CSS inside index.html */
+body { margin: 0; font-family: 'Poppins', sans-serif; display: flex; background: #0f172a; color: white; }
+
+.sidebar { width: 250px; height: 100vh; background: #1e293b; padding: 20px; border-right: 1px solid #334155; }
+.sidebar li { padding: 15px; cursor: pointer; transition: 0.3s; border-radius: 8px; }
+.sidebar li:hover { background: #38bdf8; color: #000; }
+
+.content { flex: 1; padding: 50px; }
+.section { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+
+input { padding: 12px; border-radius: 8px; border: none; width: 300px; background: #334155; color: white; }
+button { padding: 10px 20px; border-radius: 8px; border: none; background: #38bdf8; color: #000; font-weight: bold; cursor: pointer; }
+
+/* Task List styling */
+#list { list-style: none; padding: 0; }
+#list li { background: #1e293b; margin: 10px 0; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; transition: 0.3s; }
+#list li:hover { transform: scale(1.02); background: #334155; }
